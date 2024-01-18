@@ -23,7 +23,7 @@ router.get('/posts', async (req, res) => {
 router.get('/post/:postid', async (req, res) => {
     const id = req.params.postid
     try {
-        const postbyId = await Post.findById(id);
+        const postbyId = await Post.findById(id).populate({ path: 'comments', select: 'username comment -_id' });
         if (!postbyId) {
             res.status(404).json({
                 msg: "No post found with the id"
@@ -216,5 +216,23 @@ router.get("/posts/unpublished", async (req, res) => {
         })
     }
 })
+//publish an unpublished blog
+router.put("/post/publish/:id", async (req, res) => {
+    const updateId = req.params.id
+    try {
+        await Post.findOneAndUpdate(
+            { _id: updateId },
+            { published: true }
+        )
+        res.json({
+            msg: "Published blog successfully"
+        })
+    } catch (err) {
+        res.json({
+            msg: "error publishing blog"
+        })
+    }
+})
+
 
 module.exports = router
