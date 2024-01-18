@@ -6,7 +6,7 @@ const PostSchema = new mongoose.Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
     author: { type: mongoose.Schema.Types.ObjectId, required: true },
-    comments: { type: Array, default: [] },
+    comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }],
     timestamp: { type: Date },
     published: { type: Boolean }
 });
@@ -14,7 +14,7 @@ const PostSchema = new mongoose.Schema({
 const CommentSchema = new mongoose.Schema({
     username: { type: String, required: true },
     comment: { type: String, required: true },
-    postId: { type: String, required: true }, // change type to object id later
+    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
     timestamp: { type: Date }
 })
 
