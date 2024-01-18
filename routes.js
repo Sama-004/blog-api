@@ -193,6 +193,7 @@ router.delete("/post/delete/:id", async (req, res) => {
         if (!deletePost) {
             return res.status(404).json({ error: "failed to delete post with the given id" })
         }
+        await Comment.deleteMany({ postId: postId })
         res.json({
             msg: "Post deleted successfully"
         })
