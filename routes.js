@@ -6,8 +6,11 @@ const { Post, Comment } = require('./db');
 router.get('/posts', async (req, res) => {
     try {
         const posts = await Post.find({ published: true }).select("-_id")
+        const populatedPosts = await Post.populate(posts, { path: 'comments', select: 'username comment -_id' });
+
         res.json({
-            posts
+            // posts
+            populatedPosts
         })
     } catch (err) {
         res.status(401).json({
@@ -168,6 +171,11 @@ router.delete("/comment/delete/:id", async (req, res) => {
         if (!deleteComment) {
             return res.status(404).json({ error: "Failed to delete blog with the given id" })
         }
+        const updatedPost = await Post.findOneAndUpdate(
+            { _id: deleteComment.postId },
+            { $pull: { comments: commentId } },
+            { new: true }
+        );
         res.json({
             msg: "Comment deleted successfully"
         })
